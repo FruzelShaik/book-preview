@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Preview</title>
 <style>
-  /* Body and heading */
   body {
     margin: 0;
     padding: 40px 20px;
@@ -24,7 +23,6 @@
     margin-bottom: 50px;
   }
 
-  /* PDF canvas styling */
   canvas {
     display: block;
     margin: 30px auto;
@@ -38,7 +36,6 @@
     transform: scale(1.02);
   }
 
-  /* Locked page overlay */
   .lock-overlay {
     display: flex;
     justify-content: center;
@@ -72,7 +69,6 @@
     background: #e63950;
   }
 
-  /* Responsive */
   @media(max-width: 768px){
     h1 { font-size: 2rem; }
     .lock-overlay { height: 320px; font-size: 18px; }
@@ -85,20 +81,20 @@
 <h1>📖 Preview Our Amazing Book</h1>
 <div id="pdf-container"></div>
 
-<!-- PDF.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
 const pdfjsLib = window['pdfjs-dist/build/pdf'];
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 
-// PDF path
-const url = "mybook.pdf"; // must be in same folder as index.html
+const url = "mybook.pdf"; // PDF must be in the same folder as index.html
 const container = document.getElementById("pdf-container");
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
-  for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
-    if(pageNum <= 2){
-      // Render preview pages
+  const totalPages = pdf.numPages;
+
+  // Render first 2 pages as preview
+  for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+    if (pageNum <= 2) {
       pdf.getPage(pageNum).then(page => {
         const viewport = page.getViewport({scale: 1.5});
         const canvas = document.createElement("canvas");
@@ -109,7 +105,7 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
         container.appendChild(canvas);
       });
     } else {
-      // Lock remaining pages
+      // Lock everything from page 3 onward
       const lockDiv = document.createElement("div");
       lockDiv.className = "lock-overlay";
       lockDiv.innerHTML = `
@@ -117,7 +113,7 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
         <a class="buy-button" href="https://yourbookpage.com" target="_blank">Buy Full Book</a>
       `;
       container.appendChild(lockDiv);
-      break;
+      break; // Stop rendering further pages
     }
   }
 }).catch(err => {
