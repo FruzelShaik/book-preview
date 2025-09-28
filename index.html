@@ -5,53 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Preview - First 2 Pages</title>
 <style>
-
-  <!-- Locked Page Block -->
-<div class="lock-overlay">
-  🔒 Remaining pages are locked!<br>
-  <a class="buy-button" href="https://yourbookpage.com" target="_blank">Buy Full Book</a>
-</div>
-
-<style>
-  .lock-overlay {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 420px;
-    background: rgba(0,0,0,0.75);
-    color: #fff;
-    font-size: 22px;
-    font-weight: bold;
-    border-radius: 12px;
-    flex-direction: column;
-    margin: 30px auto;
-    max-width: 650px;
-    text-align: center;
-    padding: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  }
-
-  .buy-button {
-    margin-top: 25px;
-    padding: 16px 35px;
-    background: #ff4d6d;
-    color: #fff;
-    text-decoration: none;
-    font-size: 18px;
-    border-radius: 12px;
-    transition: 0.3s;
-  }
-
-  .buy-button:hover {
-    background: #e63950;
-  }
-
-  @media(max-width: 768px){
-    .lock-overlay { height: 320px; font-size: 18px; }
-    .buy-button { font-size: 16px; padding: 14px 28px; }
-  }
-</style>
-
   body {
     margin: 0;
     padding: 40px 20px;
@@ -124,4 +77,3 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
 
 </body>
 </html>
-
