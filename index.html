@@ -57,7 +57,7 @@ const container = document.getElementById("pdf-container");
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
   const totalPages = pdf.numPages;
-  const pagesToShow = Math.min(2, totalPages);
+  const pagesToShow = Math.min(7, totalPages);
 
   for (let pageNum = 1; pageNum <= pagesToShow; pageNum++) {
     pdf.getPage(pageNum).then(page => {
@@ -176,6 +176,7 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
 
 </body>
 </html>
+
 
 
 
