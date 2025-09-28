@@ -86,36 +86,36 @@
 const pdfjsLib = window['pdfjs-dist/build/pdf'];
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 
-const url = "mybook.pdf"; // PDF must be in the same folder as index.html
+const url = "mybook.pdf"; // PDF must be in the same folder
 const container = document.getElementById("pdf-container");
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
   const totalPages = pdf.numPages;
 
-  // Render first 2 pages as preview
-  for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-    if (pageNum <= 2) {
-      pdf.getPage(pageNum).then(page => {
-        const viewport = page.getViewport({scale: 1.5});
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        page.render({canvasContext: ctx, viewport});
-        container.appendChild(canvas);
-      });
-    } else {
-      // Lock everything from page 3 onward
-      const lockDiv = document.createElement("div");
-      lockDiv.className = "lock-overlay";
-      lockDiv.innerHTML = `
-        🔒 Remaining pages are locked!<br>
-        <a class="buy-button" href="https://yourbookpage.com" target="_blank">Buy Full Book</a>
-      `;
-      container.appendChild(lockDiv);
-      break; // Stop rendering further pages
-    }
+  // Render pages 1 and 2 normally
+  for (let pageNum = 1; pageNum <= 2 && pageNum <= totalPages; pageNum++) {
+    pdf.getPage(pageNum).then(page => {
+      const viewport = page.getViewport({scale: 1.5});
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      page.render({canvasContext: ctx, viewport});
+      container.appendChild(canvas);
+    });
   }
+
+  // Add the "locked" block **after all preview pages**
+  if (totalPages > 2) {
+    const lockDiv = document.createElement("div");
+    lockDiv.className = "lock-overlay";
+    lockDiv.innerHTML = `
+      🔒 Remaining pages are locked!<br>
+      <a class="buy-button" href="https://yourbookpage.com" target="_blank">Buy Full Book</a>
+    `;
+    container.appendChild(lockDiv);
+  }
+
 }).catch(err => {
   container.innerHTML = `<p style="color:red;">❌ ERROR: ${err.message}</p>`;
 });
