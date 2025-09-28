@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Preview</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(90deg, #f596a9, #f5d1d4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    }
+    canvas {
+      display: block;
+      margin: 20px auto;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      border-radius: 12px;
+      max-width: 90%;
+      height: auto;
+    }
+    .lock-overlay {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 400px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 12px;
+      flex-direction: column;
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: center;
+      padding: 20px;
+    }
+    .buy-button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      background: #ff4d6d;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+    .buy-button:hover {
+      background: #e63950;
+    }
+    @media(max-width: 768px){
+      .lock-overlay { height: 300px; font-size: 18px; }
+      .buy-button { font-size: 16px; padding: 12px 25px; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📖 Preview of My Book</h1>
+<div id="pdf-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+const pdfjsLib = window['pdfjs-dist/build/pdf'];
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+const url = "mybook.pdf"; // your PDF file
+const container = document.getElementById("pdf-container");
+
+pdfjsLib.getDocument(url).promise.then(pdf => {
+  for(let pageNum=1; pageNum<=pdf.numPages; pageNum++){
+    if(pageNum <= 2){
+      pdf.getPage(pageNum).then(page => {
+        const viewport = page.getViewport({scale:1.5});
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        page.render({canvasContext: ctx, viewport});
+        container.appendChild(canvas);
+      });
+    } else {
+      const lockDiv = document.createElement("div");
+      lockDiv.className = "lock-overlay";
+      lockDiv.innerHTML = `
+        🔒 This page is locked!<br>
+        <a class="buy-button" href="https://yourbookpage.com" target="_blank">Buy Full Book</a>
+      `;
+      container.appendChild(lockDiv);
+      break;
+    }
+  }
+}).catch(err=>{
+  container.innerHTML = `<p style="color:red;">❌ ERROR: ${err.message}</p>`;
+});
+</script>
+
+</body>
+</html>
