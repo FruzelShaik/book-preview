@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Preview</title>
+<title>Book Preview - First 2 Pages</title>
 <style>
   body {
     margin: 0;
@@ -36,49 +36,14 @@
     transform: scale(1.02);
   }
 
-  .lock-overlay {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 420px;
-    background: rgba(0,0,0,0.75);
-    color: #fff;
-    font-size: 22px;
-    font-weight: bold;
-    border-radius: 12px;
-    flex-direction: column;
-    margin: 30px auto;
-    max-width: 650px;
-    text-align: center;
-    padding: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  }
-
-  .buy-button {
-    margin-top: 25px;
-    padding: 16px 35px;
-    background: #ff4d6d;
-    color: #fff;
-    text-decoration: none;
-    font-size: 18px;
-    border-radius: 12px;
-    transition: 0.3s;
-  }
-
-  .buy-button:hover {
-    background: #e63950;
-  }
-
   @media(max-width: 768px){
     h1 { font-size: 2rem; }
-    .lock-overlay { height: 320px; font-size: 18px; }
-    .buy-button { font-size: 16px; padding: 14px 28px; }
   }
 </style>
 </head>
 <body>
 
-<h1>📖 Preview Our Amazing Book</h1>
+<h1>📖 Preview - First 2 Pages</h1>
 <div id="pdf-container"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -86,14 +51,14 @@
 const pdfjsLib = window['pdfjs-dist/build/pdf'];
 pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 
-const url = "mybook.pdf"; // PDF must be in the same folder
+const url = "mybook.pdf"; // PDF file must be in the same folder as index.html
 const container = document.getElementById("pdf-container");
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
   const totalPages = pdf.numPages;
+  const pagesToShow = Math.min(2, totalPages);
 
-  // Render pages 1 and 2 normally
-  for (let pageNum = 1; pageNum <= 2 && pageNum <= totalPages; pageNum++) {
+  for (let pageNum = 1; pageNum <= pagesToShow; pageNum++) {
     pdf.getPage(pageNum).then(page => {
       const viewport = page.getViewport({scale: 1.5});
       const canvas = document.createElement("canvas");
@@ -103,17 +68,6 @@ pdfjsLib.getDocument(url).promise.then(pdf => {
       page.render({canvasContext: ctx, viewport});
       container.appendChild(canvas);
     });
-  }
-
-  // Add the "locked" block **after all preview pages**
-  if (totalPages > 2) {
-    const lockDiv = document.createElement("div");
-    lockDiv.className = "lock-overlay";
-    lockDiv.innerHTML = `
-      🔒 Remaining pages are locked!<br>
-      <a class="buy-button" href="https://yourbookpage.com" target="_blank">Buy Full Book</a>
-    `;
-    container.appendChild(lockDiv);
   }
 
 }).catch(err => {
